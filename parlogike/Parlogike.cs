@@ -467,8 +467,6 @@ namespace Parlogike_
       int pIndex, pStart = pattern.input.Count - 1;
       int mode = 0, extra;
       float cw = 0,subcw=0, sub = 0, sub2 = 0,sub3=0,sub4=0;
-      //int nWildCards = 0;
-      bool notIgnore = false; 
 
       List<Action> intern = pattern.input;
       List<string> stack = new List<string>();
@@ -496,16 +494,8 @@ namespace Parlogike_
               {
                 stackTerm = "";
                 extra = 0;
-                if (pIndex + 1 < intern.Count){
-                  notIgnore = !intern[pIndex+1]._operator.Equals("*!=|")&&
-                              !intern[pIndex+1]._operator.Equals("*=|" );
-                }
-                else
-                {
-                  notIgnore = false;
-                }
 
-                if (pIndex + 1 < intern.Count && !notIgnore)
+                if (pIndex + 1 < intern.Count)
                 {
                   while ((sub3=fun(input[inputIndex + inputOffset + extra], intern[pIndex + 1],stackTerm)) <= 0.01 &&
                         (sub4=fun(correcteds[inputIndex + inputOffset + extra], intern[pIndex + 1],stackTerm)) <= 0.01)
@@ -570,16 +560,8 @@ namespace Parlogike_
             {
               stackTerm = "";
               extra = 0;
+
               if (pIndex + 1 < intern.Count)
-              {
-                notIgnore = !intern[pIndex + 1]._operator.Equals("*!=|") &&
-                            !intern[pIndex + 1]._operator.Equals("*=|" );
-              }
-              else
-              {
-                notIgnore = false;
-              }
-              if (pIndex + 1 < intern.Count && !notIgnore)
               {
                 while ((sub3=fun(input[inputIndex + inputOffset + extra], intern[pIndex + 1],stackTerm)) <= 0.01 &&
                       (sub4=fun(correcteds[inputIndex + inputOffset + extra], intern[pIndex + 1],stackTerm)) <= 0.01)
@@ -600,6 +582,7 @@ namespace Parlogike_
               }
               inputIndex += extra-1;
               stack.Add(stackTerm);
+              stackTerm="";
               //for  local stack depending operators
               if (pIndex + 1 < intern.Count){
                 subcw+=fun("", intern[pIndex + 1],"");
