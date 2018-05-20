@@ -168,8 +168,13 @@ namespace Parlogike_
           status = 's';
           if (_operator.Equals(""))
             _operator = " ";
-
-          vTarget.Add(new Action(_operator, holder, nline, ind + 1));
+          if (!_operator.Equals("$")){
+            vTarget.Add(new Action(_operator, holder, nline, ind + 1));
+          }
+          else
+          {
+            p.context = holder.Trim();
+          } 
           if (!_operator.Equals("*") && input)
           {
             p.tranferTerms++;
@@ -188,8 +193,13 @@ namespace Parlogike_
         if (c == ' ' && status == 'w')
         {
           status = 's';
-
-          vTarget.Add(new Action(" ", holder, nline, ind + 1));
+          
+          if (!_operator.Equals("$")){
+            vTarget.Add(new Action(" ", holder, nline, ind + 1));
+          }else
+          {
+            p.context = holder.Trim();
+          }
           if (!_operator.Equals("*") && input)
           {
             p.tranferTerms++;
@@ -359,7 +369,7 @@ namespace Parlogike_
         //p.LocalStack.clear();
       }
     }
-    public string respond(string input, bool onlyWarn,string session)
+    public string respond(string input, bool onlyWarn,string session,string context="")
     {
 
       if (!GlobalVariables.ContainsKey(session))
@@ -367,7 +377,7 @@ namespace Parlogike_
 
       string ret = "", subret = "";
       clearAttention();
-      warmAttention2(input, onlyWarn,session);
+      warmAttention2(input, onlyWarn,session,context);
       Pattern p;
       float max = 0;
       Random random = new Random();
@@ -413,7 +423,7 @@ namespace Parlogike_
               (this, "", action.arguments, 'r', true, p,session,"");
           ret += res.s;
         }
-        ret += ",";
+        ret += " ";
         p.histogram++;
       }
       /*if (ret.Length > 1)
@@ -421,7 +431,7 @@ namespace Parlogike_
       return ret;
     }
 
-    public void warmAttention2(string input, bool onlyWarn,string session)
+    public void warmAttention2(string input, bool onlyWarn,string session,string context)
     {
       var tokens_ = input.Split(' ');
       List<string> correcteds = new List<string>();
@@ -444,7 +454,7 @@ namespace Parlogike_
       for (int kInd = 0; kInd != knowledge.Count; kInd++)
       {
         var sp = knowledge[kInd];
-        if (sp.isDirective) continue;
+        if (sp.isDirective || !sp.context.Equals(context)) continue;
         //Console.WriteLine("at pattern {0}", kInd);
         warmXcorr(sp, tokens_, correcteds.ToArray(), max, (string s, Action a,string extra) =>
         {

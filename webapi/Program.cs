@@ -19,6 +19,7 @@ namespace webapi
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseUrls("http://*:7373")
                 .UseStartup<Startup>()
                 .Build();
     }

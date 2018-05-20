@@ -20,6 +20,7 @@ namespace Parlogike_
         public List<Action> input;
         public List<List<Action>> responses;
         public List<string> LocalStack;
+        public string context =""; 
         public Pattern()
         {
             input = new List<Action>();

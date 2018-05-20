@@ -273,6 +273,22 @@ namespace Parlogike_
         }
         return ret;
       };
+      Parlogike.externFunctors["||"] = (Parlogike self, string input,
+            List<Variable> args, char dir, bool mutate,
+            Pattern pattern, string ctx, string extra) =>
+        {
+           Result ret = new Result();
+           Console.WriteLine("AAAAAAAAAAAAAAA");
+           if (dir == 'r')
+           {
+             ret.s = "#";
+             
+             foreach(var v in args){
+               ret.s+= v.toString()+" ";
+             }
+           }
+           return ret; 
+        };
       //forget operator scope, prefix, wildcard
       Parlogike.externFunctors["*--"] = (Parlogike self, string input,
             List<Variable> args, char dir, bool mutate,
