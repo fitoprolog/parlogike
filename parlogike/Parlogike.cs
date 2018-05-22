@@ -67,6 +67,7 @@ namespace Parlogike_
     }
     public bool parse(string file)
     {
+      knowledge = new List<Pattern>();
       StreamReader in_ = new StreamReader(file);
       string line;
       int nline = 1;
@@ -166,25 +167,38 @@ namespace Parlogike_
         if (c == ' ' && (status == 'a' || status == 'o'))
         {
           status = 's';
+
           if (_operator.Equals(""))
             _operator = " ";
-          if (!_operator.Equals("$")){
+
+          if (!_operator.Equals("$") && !_operator.Equals("$$"))
+          {
             vTarget.Add(new Action(_operator, holder, nline, ind + 1));
+          }
+          else if (_operator.Equals("$$"))
+          {
+            p.contextRouter = holder.Trim();
+            Console.WriteLine("SETTING route as {0}", holder);
           }
           else
           {
+            Console.WriteLine("Route as {0}", holder);
             p.context = holder.Trim();
           } 
+
           if (!_operator.Equals("*") && input)
           {
             p.tranferTerms++;
           }
+
           if (input)
             corrector.CreateDictionaryEntry(holder, 3);
+          
           if (_operator == "->" || _operator == "@")
           {
             p.hasSubject = true;
           }
+
           holder = "";
           _operator = "";
           continue;
@@ -194,16 +208,27 @@ namespace Parlogike_
         {
           status = 's';
           
-          if (!_operator.Equals("$")){
-            vTarget.Add(new Action(" ", holder, nline, ind + 1));
-          }else
+          if (!_operator.Equals("$")&& !_operator.Equals("$$"))
           {
+            vTarget.Add(new Action(" ", holder, nline, ind + 1));
+             
+          }
+          else if (_operator.Equals("$$"))
+          {
+            p.contextRouter = holder.Trim();
+            Console.WriteLine("SETTING route as {0}", holder);
+          }
+          else
+          {
+            Console.WriteLine("Route as {0}", holder);
             p.context = holder.Trim();
           }
+
           if (!_operator.Equals("*") && input)
           {
             p.tranferTerms++;
           }
+
           if (input)
             corrector.CreateDictionaryEntry(holder, 3);
           holder = "";
@@ -424,7 +449,15 @@ namespace Parlogike_
           ret += res.s;
         }
         ret += " ";
-        p.histogram++;
+        if (!p.contextRouter.Equals(""))
+        {
+          Console.WriteLine("triying to route"+ret+ " context" + p.contextRouter);
+          ret = respond(ret,true, session,p.contextRouter);
+          
+        }else
+        {
+         p.histogram++;
+        } 
       }
       /*if (ret.Length > 1)
           ret = ret.Substring(0, ret.Length - 2);*/
